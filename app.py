@@ -124,55 +124,43 @@ labels = {
 }
 
 with st.form("prediction_form"):
-    values = {}
+    st.subheader("🏠 Indoor Conditions")
+    col1, col2 = st.columns(2)
 
-    tabs = st.tabs([
-        "🏠 Indoor Sensors",
-        "🌦️ Outdoor Conditions",
-        "💡 Energy"
-    ])
+    values = defaults.copy()
 
-    indoor_features = [
-        "T1", "RH_1", "T2", "RH_2", "T3", "RH_3",
-        "T4", "RH_4", "T5", "RH_5", "T6", "RH_6",
-        "T7", "RH_7", "T8", "RH_8", "T9", "RH_9"
-    ]
-
-    with tabs[0]:
-        cols = st.columns(3)
-        for i, name in enumerate(indoor_features):
-            with cols[i % 3]:
-                values[name] = st.number_input(
-                    labels[name],
-                    value=float(defaults[name]),
-                    key=name
-                )
-
-    with tabs[1]:
-        cols = st.columns(2)
-        outdoor_features = [
-            "T_out", "Press_mm_hg", "RH_out",
-            "Windspeed", "Visibility", "Tdewpoint"
-        ]
-        for i, name in enumerate(outdoor_features):
-            with cols[i % 2]:
-                values[name] = st.number_input(
-                    labels[name],
-                    value=float(defaults[name]),
-                    key=name
-                )
-
-    with tabs[2]:
+    with col1:
         values["lights"] = st.number_input(
-            labels["lights"],
-            min_value=0,
-            max_value=100,
-            value=0,
-            step=1,
-            key="lights"
+            "Lights Energy (Wh)", min_value=0,
+            max_value=100, value=0
+        )
+        values["T1"] = st.number_input(
+            "Kitchen Temperature (°C)", value=21.7
+        )
+        values["RH_1"] = st.number_input(
+            "Kitchen Humidity (%)", value=40.3
+        )
+        values["T2"] = st.number_input(
+            "Living Room Temperature (°C)", value=20.3
         )
 
-    submitted = st.form_submit_button("⚡ Predict Energy Consumption")
+    with col2:
+        values["RH_2"] = st.number_input(
+            "Living Room Humidity (%)", value=40.4
+        )
+        values["T_out"] = st.number_input(
+            "Outdoor Temperature (°C)", value=7.4
+        )
+        values["RH_out"] = st.number_input(
+            "Outdoor Humidity (%)", value=79.8
+        )
+        values["Windspeed"] = st.number_input(
+            "Wind Speed (m/s)", value=4.0
+        )
+
+    submitted = st.form_submit_button(
+        "⚡ Predict Energy Consumption"
+    )
 
 if submitted:
     input_df = pd.DataFrame(
@@ -188,22 +176,13 @@ if submitted:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown(
-            f'<div class="metric-card"><h3>Predicted Consumption</h3>'
-            f'<h1>{prediction:.2f} Wh</h1>'
-            f'<p>Estimated appliance energy use</p></div>',
-            unsafe_allow_html=True
-        )
+        st.metric("Predicted Energy Consumption", f"{prediction:.2f} Wh")
 
     with col2:
-        st.markdown(
-            '<div class="metric-card"><h3>Model</h3>'
-            '<h1>Ridge Regression</h1>'
-            '<p>10-fold cross-validation RMSE: 93.69 Wh</p></div>',
-            unsafe_allow_html=True
-        )
+        st.metric("Model", "Ridge Regression")
+        st.caption("10-fold cross-validation RMSE: 93.69 Wh")
 
     st.info(
-        "This is an estimate based on the dataset and entered sensor readings, "
-        "not a live measurement of your home."
+        "This is an estimate based on the dataset, not a live "
+        "measurement of your home."
     )
