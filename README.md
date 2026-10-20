@@ -6,6 +6,10 @@ A machine learning web application that predicts household appliance energy cons
 
 Smart Home Energy AI uses **Ridge Regression** to estimate appliance energy consumption in watt-hours (Wh). Users can enter a few environmental readings through an interactive Streamlit interface and receive an instant prediction.
 
+## 🌐 Live Demo
+
+Try the application here: [Smart Home Energy AI](https://home-energy-consumption.streamlit.app/)
+
 ## ✨ Features
 
 - Predict household appliance energy consumption.
